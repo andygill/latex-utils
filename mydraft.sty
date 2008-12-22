@@ -1,0 +1,67 @@
+%
+% These are utilties to help me write and markup drafts, for papers I lead.
+% I need a better name that mydraft.
+%
+
+\ProvidesPackage{mydraft}[2008/12/22 v0.01]
+\RequirePackage{boxedminipage}
+\RequirePackage{fancyhdr}
+\RequirePackage{datetime}
+
+\newif\ifmydraft@submitted
+\newif\ifmydraft@draft
+\DeclareOption{submitted}{
+  \mydraft@submittedtrue
+}
+\newif\ifmydraft@draft
+\DeclareOption{draft}{
+  \mydraft@drafttrue
+}
+\ProcessOptions
+
+\settimeformat{ampmtime}
+
+\newcommand{\todo}[1]{\marginpar{\sc Todo}{\fbox{\bf #1}}}
+\newenvironment{comment}[0]{%
+\begin{center}
+\addtolength{\fboxsep}{3pt}
+\marginpar{\vskip 6pt\sc Comment}
+\begin{boxedminipage}{0.8\textwidth}
+}{%
+\end{boxedminipage}\end{center}
+}
+\newenvironment{roughnotes}[0]{%
+\par\vspace{10pt}\noindent\marginpar{\sc \begin{tabular}{ll}Rough\\Notes\end{tabular}}%
+$\left\Vert~\begin{minipage}{.97\textwidth}%
+}{\end{minipage}~\right.$\par\vspace{10pt}}
+\newcommand{\cursor}{%
+\begin{center}
+\marginpar{\vskip 4pt\sc Cursor}
+\begin{tabular*}{\textwidth}{c}
+\hline
+\end{tabular*}
+\end{center}
+}
+\def\papertarget#1{
+\lhead{}        \rhead{}
+\ifmydraft@draft
+  \chead{{\sc\Large Draft}}
+  \renewcommand{\headrulewidth}{0.1pt}
+  \renewcommand{\footrulewidth}{0.1pt}
+  \lfoot{\today~at~\currenttime}  \cfoot{}        \rfoot{\thepage}
+\fi
+\ifmydraft@submitted
+  \chead{\fbox{\sc Submitted to #1}} 
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+  \lfoot{}  \cfoot{\thepage}        \rfoot{}
+\fi
+}
+
+\let\my@maketitle=\maketitle
+\def\maketitle{%
+\my@maketitle%
+\thispagestyle{fancy}%
+\ifmydraft@draft\pagestyle{fancy}\fi
+\ifmydraft@submitted\pagestyle{plain}\fi
+}

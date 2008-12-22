@@ -1,0 +1,109 @@
+\documentclass{article}
+
+\usepackage{natbib}
+
+\usepackage[submitted]{mydraft}
+%\usepackage[draft]{mydraft}
+\papertarget{the IFIP WC-DSL}
+
+\begin{document}
+\title{A Haskell Hosted DSL for\\Writing Transformation Systems}
+\author{Andy Gill}
+
+\maketitle
+%\enabledraft{Submitted to the IFIP Working Conference on Domain Specific Languages\\\sdf\\sdfsdfsdfsgfsg\\sdsgsgsdg\\sdfsgg}
+
+\begin{abstract}
+KURE is a Haskell hosted Domain Specific Language (DSL) for writing transformation systems
+based on rewrite strategies.
+%1. State the problem 
+When writing transformation systems, a significant amount of engineering effort goes into setting up plumbing
+to make sure that specific rewrite rules can fire.
+%2. Say why it’s an interesting problem 
+Systems like Stratego and Strafunski provide most of this plumbing as infrastructure, allowing the DSL user
+to focus on the rewrites rules.
+%3. Say what your solution achieves 
+KURE is a strongly typed strategy control language in the tradition of Stratego and Strafunski.
+It is intended for writing reasonably efficient rewrite systems, and
+makes use of type families to provide a delimited generic mechanism for tree rewriting,
+provides support for efficient identity rewrite detection.
+%4. Say what follows from your solution
+%KURE is therefore an excellent DSL for implementing rewriting and transformation systems in Haskell.
+\end{abstract}
+
+
+\section{Introduction}
+
+Sometimes its easy to say what you want to do, but tedious to get the scaffolding in place. This is an ideal candidate for a Domain Specific Language (DSL) where the language provides the scaffolding as a pre-packaged service. 
+For example, scaffolding is needed to promoting local, syntax directed rewrites into a global context. Take the first case rewriting rule from the Haskell 98 Report~\cite{Haskell98Book} which says:
+
+\[
+\begin{array}{@{}cl}
+(a)&\verb@case @$e$\verb@ of { @$alts$\verb@ } @$=$\verb@ (\@$v$\verb@ -> case @$v$\verb@ of { @$alts$\verb@ }) @e\\
+&${\rm where $v$ is a new variable}$\\
+\end{array}
+\]
+
+This rule is used to simplify a case over an arbitrary expression, and convert it to a case over a {\em variable\/}.
+We can express this rule directly in Haskell, using a rewrite in the Haskell Syntax provided by Template Haskell~\cite{metahaskell}, using the function \verb|rule_a|.
+
+This rule reflects our syntax rewrite rule almost directly,
+and cleanly utilizing a monadic name supply for a fresh variable.
+The rule also acts locally, and needs additional machinery to perform this rewrite on whole programs. 
+Strategic programming is a paradigm which builds on rewrite primitives like \verb|rule_a|
+by using combinators to construct complex and powerful rewrites and transformation systems. 
+
+This paper introduces KURE, a strategic programming DSL hosted in Haskell being developed
+at the University of Kansas. KURE provides a small set of combinators that can be used
+to build parameterized term rewriting and general user-defined rule application. In this paper, we discuss
+in detail the design of KURE, and how we used the tradition of type-centric DSL design
+to drive our implementation. This paper makes the following specific contributions.
+\begin{itemize}        
+
+\item We move both rewrites and rewrite strategies into a strongly typed world.
+Throughout the paper we make detailed comparisons with previous attempts to providing typing to 
+rewrite strategy systems.
+
+\item More specifically, we provide typing for term traversing strategies
+using a new capability, a light\-weight and
+customized generic term traversal mechanism implemented using associated type synonyms~\cite{Chakavarty:AssocTypeSyn}.
+
+\item We introduce the ability to record equality over terms, which is traditionally a weakness of purely functional rewrite engines.
+Equality is important because the use-case for many transformations in practice is to iterate until nothing else can be achieved.
+
+\item We abstract our combinators explicitly over a user-defined context, allowing concerns like environment or location to be 
+represented.
+We show the generality of this contribution by implementing path selection.
+This design choice allows a particularly clean relationship between the semantics being hosted by the DSL, and the implementation using our DSL.
+
+
+\item We lay out the methodology used in the design of our hosted DSL, with the intent that others can
+use our design template.
+
+%\item KURE is a meta DSL. It in intended to allow people to write rewrite rules for other to use as a DSL. 
+%We justify this objective using a case study of an applying KURE to a System-F syntax.
+
+\end{itemize}
+
+In this paper, we distinguish between DSL code written using KURE and the implementation of KURE itself by placing code
+fragments that are uses of the KURE DSL (or similar) inside boxes, and code fragments that are describing the KURE
+internals without boxes.
+
+KURE is both practical and useful, and builds on many years of research and development into rewrite strategies, especially the work of Stratego~\cite{Vis04.strategoxt} and Strafunski ~\cite{LV02-PADL}, and our own experiences with HERA~\cite{gillhera06}.
+We compare KURE to these systems throughout this paper, as well as make different design decisions explicit.
+We summarize the differences in section~\ref{sec:related}.
+In recognition to the contributions make by these systems, we reuse where possible the naming conventions of Stratego and Strafunski. 
+
+\newpage\section{Introducing Strategic Programming}\label{intro:stra-prog}
+
+Stratego and other strategic programming languages provide 
+a mechanism to express rewrites as primitive strategies, and 
+a small set of combinators that act on strategies, giving the
+ability to build complex custom strategies.
+In this section, we introduce the basic combinators in strategic programing used in Stratego.
+This will guide our design of KURE.
+
+
+
+
+\end{document}
