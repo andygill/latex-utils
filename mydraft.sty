@@ -9,7 +9,7 @@
 %\usepackage[submitted OR draft]{mydraft}
 %\papertarget{ICFP'23}
 
-\ProvidesPackage{mydraft}[2008/12/22 v0.01]
+\ProvidesPackage{mydraft}[2009/01/04 v0.02]
 \RequirePackage{boxedminipage}
 \RequirePackage{fancyhdr}
 \RequirePackage{datetime}
@@ -49,9 +49,9 @@ $\left\Vert~\begin{minipage}{.97\textwidth}%
 \end{center}
 }
 \def\papertarget#1{
-\lhead{}        \rhead{}
 \ifmydraft@draft
-  \chead{{\sc\Large Draft}}
+  \lhead{}        \rhead{}
+  \chead{{Draft in preparation for submission to #1}}
   \renewcommand{\headrulewidth}{0.1pt}
   \renewcommand{\footrulewidth}{0.1pt}
   \lfoot{\today~at~\currenttime}  \cfoot{}        \rfoot{\thepage}
